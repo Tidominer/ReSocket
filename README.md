@@ -5,4 +5,4 @@ Just add the "SocketNetworking" or "SocketNetworkingClient" folder to your proje
 # Unity Client
 There is also a client That works in Unity engine. You can use it for making online games. It has an example too.
 # Documents
-Actually there is no documentation yet. But I'll write them as soon as possible.
+There is no documentation yet. But I'll write them as soon as possible.
