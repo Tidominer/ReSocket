@@ -1,4 +1,4 @@
-#  SocketSharp
+#  ReSocket
 SocketSharp is a C# TCP Socket wrapper that makes writing socket servers and clients easier.
 # Install and Use
 Just add the "SocketNetworking" or "SocketNetworkingClient" folder to your project. You can find examples for using both Server and Client in 'Example' directory of their directories.
