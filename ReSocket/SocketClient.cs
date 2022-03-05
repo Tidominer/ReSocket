@@ -92,33 +92,40 @@ namespace ReSocket
         {
             Socket.BeginReceive(_receiveBuffer, 0, ReceiveBufferSize, SocketFlags.None, ar =>
             {
-                int receivedBytes = Socket.EndReceive(ar);
-                tcs.SetResult(true);
-                if (receivedBytes > 0)
+                try
                 {
-                    var receivedData = Encoding.UTF8.GetString(_receiveBuffer.Take(receivedBytes).ToArray());
-                    _receivedDataQuery += receivedData;
-                    var index = _receivedDataQuery.IndexOf("<?;>", StringComparison.Ordinal);
-                    while (index > -1)
+                    int receivedBytes = Socket.EndReceive(ar);
+                    tcs.SetResult(true);
+                    if (receivedBytes > 0)
                     {
-                        var request = _receivedDataQuery.Substring(0, index)
-                            .Split(new[] {"<?:>"}, StringSplitOptions.None);
-                        if (request.Length > 1)
-                            try
-                            {
-                                Events[request[0]].Invoke(request[1]);
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine(e.Message);
-                            }
+                        var receivedData = Encoding.UTF8.GetString(_receiveBuffer.Take(receivedBytes).ToArray());
+                        _receivedDataQuery += receivedData;
+                        var index = _receivedDataQuery.IndexOf("<?;>", StringComparison.Ordinal);
+                        while (index > -1)
+                        {
+                            var request = _receivedDataQuery.Substring(0, index)
+                                .Split(new[] {"<?:>"}, StringSplitOptions.None);
+                            if (request.Length > 1)
+                                try
+                                {
+                                    Events[request[0]].Invoke(request[1]);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e.Message);
+                                }
 
-                        _receivedDataQuery =
-                            _receivedDataQuery.Substring(index + 4, _receivedDataQuery.Length - (index + 4));
-                        index = _receivedDataQuery.IndexOf("<?;>", StringComparison.Ordinal);
+                            _receivedDataQuery =
+                                _receivedDataQuery.Substring(index + 4, _receivedDataQuery.Length - (index + 4));
+                            index = _receivedDataQuery.IndexOf("<?;>", StringComparison.Ordinal);
+                        }
+                    }
+                    else
+                    {
+                        Disconnect();
                     }
                 }
-                else
+                catch
                 {
                     Disconnect();
                 }
