@@ -2,7 +2,7 @@
 
 ## Documents
 <ul>
-  <li> <a href="https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/SocketServer.md">ReSocket Server </a> </li>
+  <li> <a href="https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/ReSocket.md">ReSocket Server </a> </li>
   <li> ReSocket Client (WIP) </li>
   <li> ReSocket Unity Client (WIP) </li>
 </ul>
