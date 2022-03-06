@@ -1,6 +1,8 @@
 # [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md) > [ReSocket Server](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/ReSocket.md) > SockerServer
 #### SocketServer is a wrapper for TCP Socket Servers. Create an instance of this class to initialize a socket server.
 
+# Public Methods
+
 <ul>
   <l1> <h2> SocketServer (string ipAddress, int port, int listen = 10) </h2> </li>
   SockerServer's constructor initializes a Socket On given IP and Port <b>but <i>DOES NOT</i> start the server!</b>
@@ -44,6 +46,35 @@
       <td>This client won't get the call (default = null).</td>
     </tr>
   </table>
+  <l1> <h2> void Shutdown () </h2> </li>
+  Shutdowns the server and disconnect all clients.
+</ul>
+
+# Public Variables
+
+<table>
+  <tr>
+    <td>Variable</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td> public readonly IPAddress IpAddress </td>
+    <td> IPAddress of the server. </td>
+  </tr>
+  <tr>
+    <td> public readonly int Port </td>
+    <td> Port of the server. </td>
+  </tr>
+  <tr>
+    <td> public readonly Socket Listener </td>
+    <td> Server's socket object. </td>
+  </tr>
+    <tr>
+    <td> public readonly Socket Listener </td>
+    <td> Server's socket object. </td>
+  </tr>
+  </table>
+    
   <l1> <h2> void Shutdown () </h2> </li>
   Shutdowns the server and disconnect all clients.
 </ul>
