@@ -15,10 +15,8 @@ namespace ReSocket
         // ReSharper disable MemberCanBePrivate.Global UnusedMember.Global
         public readonly IPAddress IpAddress;
         public readonly int Port;
-        private IPEndPoint IpEndPoint { get; set; }
-        public Socket Listener { get; private set; }
+        public readonly Socket Listener;
         public List<SocketClient> Clients { get; private set; }
-
         public int ReceiveBufferSize = 1024;
         private Thread _serverThread;
         private readonly int _listen;
@@ -30,11 +28,14 @@ namespace ReSocket
             IpAddress = IPAddress.Parse(ipAddress);
             Port = port;
             _listen = listen;
+            var ipEndPoint = new IPEndPoint(IpAddress,Port);
+            Listener = new Socket(ipEndPoint.AddressFamily,SocketType.Stream,ProtocolType.Tcp);
+            Listener.Bind(ipEndPoint);
         }
 
         public void Start()
         {
-            if (Listener == null || !Listener.Connected)
+            if (!Listener.Connected)
             {
                 Clients = new List<SocketClient>();
                 _serverThread = new Thread(StartServer);
@@ -48,9 +49,6 @@ namespace ReSocket
         
         private async void StartServer()
         {
-            IpEndPoint = new IPEndPoint(IpAddress,Port);
-            Listener = new Socket(IpEndPoint.AddressFamily,SocketType.Stream,ProtocolType.Tcp);
-            Listener.Bind(IpEndPoint);
             Listener.Listen(_listen);
             while (true)
             {
