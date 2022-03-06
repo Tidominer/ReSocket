@@ -16,7 +16,7 @@ namespace ReSocket
         public readonly IPAddress IpAddress;
         public readonly int Port;
         public readonly Socket Listener;
-        public List<SocketClient> Clients { get; private set; }
+        public readonly List<SocketClient> Clients;
         public int ReceiveBufferSize = 1024;
         private Thread _serverThread;
         private readonly int _listen;
@@ -28,6 +28,7 @@ namespace ReSocket
             IpAddress = IPAddress.Parse(ipAddress);
             Port = port;
             _listen = listen;
+            Clients = new List<SocketClient>();
             var ipEndPoint = new IPEndPoint(IpAddress,Port);
             Listener = new Socket(ipEndPoint.AddressFamily,SocketType.Stream,ProtocolType.Tcp);
             Listener.Bind(ipEndPoint);
@@ -37,7 +38,6 @@ namespace ReSocket
         {
             if (!Listener.Connected)
             {
-                Clients = new List<SocketClient>();
                 _serverThread = new Thread(StartServer);
                 _serverThread.Start();
             }
