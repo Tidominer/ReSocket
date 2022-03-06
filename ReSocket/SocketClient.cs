@@ -17,13 +17,13 @@ namespace ReSocket
         // ReSharper disable MemberCanBePrivate.Global UnusedAutoPropertyAccessor.Global UnusedMember.Global
         public Socket Socket { get; }
         public SocketServer Server { get; }
-        public IPEndPoint EndPoint { get; }
-        public string Ip => ((IPEndPoint) Socket.RemoteEndPoint).ToString();
-        public int ReceiveBufferSize => Server.ReceiveBufferSize;
+        public readonly string Ip;
+        public readonly int Port;
+        private int ReceiveBufferSize => Server.ReceiveBufferSize;
         public bool Connected => Socket.Connected;
         public bool Listening { get; private set; }
         public Dictionary<string, Action<string>> Events { get; }
-        public Thread Thread { get; }
+        private Thread Thread { get; }
 
         public Action OnDisconnect;
 
@@ -38,10 +38,12 @@ namespace ReSocket
             Disconnected = false;
             Socket = client;
             Server = server;
-            EndPoint = (IPEndPoint) Socket.RemoteEndPoint;
             Events = new Dictionary<string, Action<string>>();
             _receiveBuffer = new byte[ReceiveBufferSize];
             _receivedDataQuery = "";
+            var split = ((IPEndPoint) client.RemoteEndPoint).ToString().Split(':');
+            Ip = split[0];
+            Port = int.Parse(split[1]);
             Thread = new Thread(ReceiveDataLoop);
             Thread.Start();
         }

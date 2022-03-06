@@ -13,14 +13,16 @@ namespace ReSocket
     public class SocketServer
     {
         // ReSharper disable MemberCanBePrivate.Global UnusedMember.Global
-        public IPAddress IpAddress { get; }
-        public int Port { get; }
-        public IPEndPoint IpEndPoint { get; private set; }
+        public readonly IPAddress IpAddress;
+        public readonly int Port;
+        private IPEndPoint IpEndPoint { get; set; }
         public Socket Listener { get; private set; }
         public List<SocketClient> Clients { get; private set; }
+
         public int ReceiveBufferSize = 1024;
         private Thread _serverThread;
         private readonly int _listen;
+        
         public Action<SocketClient> OnClientConnect;
 
         public SocketServer(string ipAddress,int port,int listen = 10)
@@ -28,7 +30,6 @@ namespace ReSocket
             IpAddress = IPAddress.Parse(ipAddress);
             Port = port;
             _listen = listen;
-            
         }
 
         public void Start()
