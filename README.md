@@ -20,5 +20,5 @@ After downloading and adding the "ReSocketClient" directory to your project, you
     
 # Unity Client
 There is also a client That works in Unity engine. You can use it for making online games. An example for that will be uploaded soon.
-# Documents
-There are no documents yet. But I'll write them as soon as possible.
+# (Documents)[https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/SocketServer.md]
+Writing documents is in progress.
