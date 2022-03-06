@@ -26,7 +26,7 @@
   </tr>
   <tr>
     <td> public int ReceiveBufferSize = 1024 </td>
-    <td> Size of receibe buffer (maximum number of bytes which server can receive from client in one Receive action. should be the same as buffer size of the client (on client side). default = 1 KB. </td>
+    <td> Size of receive buffer (maximum number of bytes that server can receive from one client at a time. should be the same as buffer size of the client (on client side), otherwise there may be data loss. default = 1 KB. </td>
   </tr>
   <tr>
     <td> public Action<SocketClient> OnClientConnect </td>
