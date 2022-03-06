@@ -1,6 +1,39 @@
 # [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md) > [ReSocket Server](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/ReSocket.md) > SockerServer
 #### SocketServer is a wrapper for TCP Socket Servers. Create an instance of this class to initialize a socket server.
 
+# Public Variables
+
+<table>
+  <tr>
+    <td>Variable</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td> public readonly IPAddress IpAddress </td>
+    <td> IPAddress of the server. </td>
+  </tr>
+  <tr>
+    <td> public readonly int Port </td>
+    <td> Port of the server. </td>
+  </tr>
+  <tr>
+    <td> public readonly Socket Listener </td>
+    <td> Server's socket object. </td>
+  </tr>
+  <tr>
+    <td> public readonly List<SocketClient> Clients </td>
+    <td> List of connected client's SocketClient objects. </td>
+  </tr>
+  <tr>
+    <td> public int ReceiveBufferSize = 1024 </td>
+    <td> Size of receibe buffer (maximum number of bytes which server can receive from client in one Receive action. should be the same as buffer size of the client (on client side). default = 1 KB. </td>
+  </tr>
+  <tr>
+    <td> public Action<SocketClient> OnClientConnect </td>
+    <td> An action that gets called when a client connects to the server. has one parameter 'client' that represents the SocketClient object of the connected client. </td>
+  </tr>
+  </table>
+
 # Public Methods
 
 <ul>
@@ -46,35 +79,6 @@
       <td>This client won't get the call (default = null).</td>
     </tr>
   </table>
-  <l1> <h2> void Shutdown () </h2> </li>
-  Shutdowns the server and disconnect all clients.
-</ul>
-
-# Public Variables
-
-<table>
-  <tr>
-    <td>Variable</td>
-    <td>Description</td>
-  </tr>
-  <tr>
-    <td> public readonly IPAddress IpAddress </td>
-    <td> IPAddress of the server. </td>
-  </tr>
-  <tr>
-    <td> public readonly int Port </td>
-    <td> Port of the server. </td>
-  </tr>
-  <tr>
-    <td> public readonly Socket Listener </td>
-    <td> Server's socket object. </td>
-  </tr>
-    <tr>
-    <td> public readonly Socket Listener </td>
-    <td> Server's socket object. </td>
-  </tr>
-  </table>
-    
   <l1> <h2> void Shutdown () </h2> </li>
   Shutdowns the server and disconnect all clients.
 </ul>
