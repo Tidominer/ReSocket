@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ReSocket
@@ -15,37 +14,36 @@ namespace ReSocket
     public class SocketClient
     {
         // ReSharper disable MemberCanBePrivate.Global UnusedAutoPropertyAccessor.Global UnusedMember.Global
-        public Socket Socket { get; }
-        public SocketServer Server { get; }
+        public readonly Socket Socket;
+        public readonly SocketServer Server;
         public readonly string Ip;
         public readonly int Port;
-        private int ReceiveBufferSize => Server.ReceiveBufferSize;
-        public bool Connected => Socket.Connected;
         public bool Listening { get; private set; }
-        public Dictionary<string, Action<string>> Events { get; }
-        private Thread Thread { get; }
-
+        
         public Action OnDisconnect;
+        
+        private int ReceiveBufferSize => Server.ReceiveBufferSize;
+        
+        private readonly Dictionary<string, Action<string>> _events;
 
         private readonly byte[] _receiveBuffer;
         
         private string _receivedDataQuery;
 
-        public bool Disconnected { get; private set; }
+        public bool Connected { get; private set; }
 
         public SocketClient(Socket client, SocketServer server)
         {
-            Disconnected = false;
+            Connected = true;
             Socket = client;
             Server = server;
-            Events = new Dictionary<string, Action<string>>();
+            _events = new Dictionary<string, Action<string>>();
             _receiveBuffer = new byte[ReceiveBufferSize];
             _receivedDataQuery = "";
             var split = ((IPEndPoint) client.RemoteEndPoint).ToString().Split(':');
             Ip = split[0];
             Port = int.Parse(split[1]);
-            Thread = new Thread(ReceiveDataLoop);
-            Thread.Start();
+            ReceiveDataLoop();
         }
 
         public void StartListening()
@@ -53,7 +51,7 @@ namespace ReSocket
             Listening = true;
         }
 
-        public void StopListening()
+        public void PauseListening()
         {
             Listening = false;
         }
@@ -67,12 +65,12 @@ namespace ReSocket
 
         public void On(string rEvent, Action<string> rAction)
         {
-            Events.Add(rEvent, rAction);
+            _events.Add(rEvent, rAction);
         }
 
         private async void ReceiveDataLoop()
         {
-            while (!Disconnected && Connected)
+            while (Connected)
             {
                 if (Listening)
                 {
@@ -110,7 +108,7 @@ namespace ReSocket
                             if (request.Length > 1)
                                 try
                                 {
-                                    Events[request[0]].Invoke(request[1]);
+                                    _events[request[0]].Invoke(request[1]);
                                 }
                                 catch (Exception e)
                                 {
@@ -136,10 +134,10 @@ namespace ReSocket
 
         public void Disconnect()
         {
-            if (!Disconnected)
+            if (Connected)
             {
                 Listening = false;
-                Disconnected = true;
+                Connected = false;
                 Socket.Shutdown(SocketShutdown.Both);
                 Socket.Close();
                 OnDisconnect?.Invoke();
