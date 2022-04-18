@@ -7,10 +7,6 @@
   <tr>
     <th>Variable</th>
     <th>Description</th>
-    
-        public readonly IPEndPoint EndPoint;
-        public readonly Dictionary<string, Action<string>> Events;
-    
   </tr>
   <tr>
     <td> public readonly Socket Socket </td>
@@ -34,7 +30,7 @@
   </tr>
   <tr>
     <td> public Action OnDisconnect </td>
-    <td> An action which gets invoked when the client dissconnects from the server. </td>
+    <td> An action which gets invoked when the client disconnects from the server. </td>
   </tr>
   </table>
 
@@ -42,7 +38,7 @@
 
 <ul>
   <l1> <h2> SocketConnection (string ipAddress, int port) </h2> </li>
-  SockerServer's constructor initializes a Socket On given IP and Port <b>but <i>DOES NOT</i> start the server!</b>
+  SocketConnection's constructor initializes the socket object, but does not connect it.
   <table>
     <tr>
       <td>Parameter</td>
@@ -74,11 +70,9 @@
       <td>string sMessage</td>
       <td>Message or data to send along the event.</td>
     </tr>
-    <tr>
-      <td>SocketClient exception</td>
-      <td>This client won't get the call (default = null).</td>
-    </tr>
   </table>
-  <l1> <h2> void Shutdown () </h2> </li>
-  Shutdowns the server and disconnect all clients.
+  <l1> <h2> void On (string rEvent, Action<string> rAction) </h2> </li>
+  Adds the given Event and Action to <i>Events</i> dictionary.
+  <l1> <h2> public void Disconnect () </h2> </li>
+  Closes the connection to ther server and invokes OnDisconnect.
 </ul>
