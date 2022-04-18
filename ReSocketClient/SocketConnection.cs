@@ -14,17 +14,16 @@ namespace ReSocketClient
     public class SocketConnection
     {
         // ReSharper disable FieldCanBeMadeReadOnly.Global MemberCanBePrivate.Global
-        public Socket Socket { get; }
-        public IPAddress IpAddress  { get; }
-        public int Port  { get; }
-        public IPEndPoint EndPoint  { get; }
+        public readonly Socket Socket;
+        public readonly IPAddress IpAddress;
+        public readonly int Port;
+        public readonly IPEndPoint EndPoint;
+        public readonly Dictionary<string, Action<string>> Events;
         public bool Connected => Socket.Connected;
         public bool Disconnected { get; private set; }
 
-        public int ReceiveBufferSize = 1024; 
-        
-        public Dictionary<string, Action<string>> Events;
-        
+        public int ReceiveBufferSize = 1024;
+
         public Action OnDisconnect;
         
         private readonly byte[] _receiveBuffer;
@@ -48,17 +47,17 @@ namespace ReSocketClient
                 ConnectionLoop();
             }
         }
-
-        public void On(string rEvent, Action<string> rAction)
-        {
-            Events.Add(rEvent, rAction);
-        }
         
         public void Send(string sEvent,string sMessage = "")
         {
             var text = sEvent + "<?:>" + sMessage + "<?;>";
             var bytes = Encoding.UTF8.GetBytes(text);
             try {Socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, ar => { Socket.EndSend(ar); }, new object());}catch{/*ignored*/}
+        }
+
+        public void On(string rEvent, Action<string> rAction)
+        {
+            Events.Add(rEvent, rAction);
         }
 
         private async void ConnectionLoop()
