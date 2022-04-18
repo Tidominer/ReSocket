@@ -58,9 +58,9 @@
     </tr>
   </table>
   <l1> <h2> void StartListening () </h2> </li>
-  Sets <i>Listenting boolean</i> to true so the class begins listening to the data coming from the client's device. This method gets automatically called from SocketServer when initializes.
+  Sets <i>Listenting</i> boolean to true so the class begins listening to the data coming from the client's device. This method gets automatically called from SocketServer when initializes.
   <l1> <h2> void PauseListening () </h2> </li>
-  Sets <i>Listenting boolean</i> to false so the class stops listening to the data coming from the client's device.
+  Sets <i>Listenting</i> boolean to false so the class stops listening to the data coming from the client's device.
   <l1> <h2> void On (string rEvent, Action<string> rAction) </h2> </li>
     Adds the given Event and Action to <i>_events</i> dictionary.
     <table>
