@@ -78,7 +78,7 @@
     </tr>
   </table>
   <l1> <h2> void Send (string sEvent, string sMessage = "") </h2> </li>
-  Sends an Event with a Message to the client side.
+  Sends an event call with a message to the client side.
   <table>
     <tr>
       <th>Parameter</th>
