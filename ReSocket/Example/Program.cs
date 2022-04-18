@@ -13,7 +13,7 @@ namespace ReSocket.Example
             server.OnClientConnect = (client) =>
             {
                 var id = ShortID.Generate(10);
-                Console.WriteLine("Client '{0}' connected. Client IP : {1}",id,client.Ip);
+                Console.WriteLine("Client '{0}' connected. Client IP : {1}",id,client.IpAddress);
                 client.Send("SetID",id);
 
                 client.On("ping", (msg) =>
