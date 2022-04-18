@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ReSocket
@@ -43,7 +44,8 @@ namespace ReSocket
             var split = ((IPEndPoint) client.RemoteEndPoint).ToString().Split(':');
             IpAddress = split[0];
             Port = int.Parse(split[1]);
-            ReceiveDataLoop();
+            Thread thread = new Thread(ReceiveDataLoop);
+            thread.Start();
         }
 
         public void StartListening()
@@ -70,9 +72,9 @@ namespace ReSocket
 
         private async void ReceiveDataLoop()
         {
-            while (Connected)
+            while (true)
             {
-                if (Listening)
+                if (Listening && Connected)
                 {
                     try
                     {
@@ -134,6 +136,7 @@ namespace ReSocket
 
         public void Disconnect()
         {
+            Console.WriteLine("Disconnected");
             if (Connected)
             {
                 Listening = false;

@@ -18,13 +18,16 @@ namespace ReSocket
         public readonly Socket Listener;
         public readonly List<SocketClient> Clients;
         public int ReceiveBufferSize = 1024;
+        
         private Thread _serverThread;
         private readonly int _listen;
         
         public Action<SocketClient> OnClientConnect;
+        public bool Connected;
 
         public SocketServer(string ipAddress,int port,int listen = 10)
         {
+            Connected = false;
             IpAddress = IPAddress.Parse(ipAddress);
             Port = port;
             _listen = listen;
@@ -36,21 +39,23 @@ namespace ReSocket
 
         public void Start()
         {
-            if (!Listener.Connected)
+            if (!Connected)
             {
                 _serverThread = new Thread(StartServer);
                 _serverThread.Start();
+                Connected = true;
             }
             else
             {
-                throw new Exception("Server is already running!");
+                Connected = false;
+                throw new Exception("Server is already running");
             }
         }
         
         private async void StartServer()
         {
             Listener.Listen(_listen);
-            while (true)
+            while (Connected)
             {
                 TaskCompletionSource<bool> acceptTask = new TaskCompletionSource<bool>();
                 Listener.BeginAccept(ar =>
@@ -64,7 +69,6 @@ namespace ReSocket
                 }, new object());
                 await acceptTask.Task;
             }
-            // ReSharper disable once FunctionNeverReturns
         }
 
         internal void ClientDisconnected(SocketClient client)
@@ -85,6 +89,7 @@ namespace ReSocket
         {
             Listener.Shutdown(SocketShutdown.Both);
             Listener.Disconnect(false);
+            Connected = false;
         }
     }
 }
