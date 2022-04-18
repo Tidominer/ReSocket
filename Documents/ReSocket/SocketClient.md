@@ -5,8 +5,8 @@
 
 <table>
   <tr>
-    <td>Variable</td>
-    <td>Description</td>
+    <th>Variable</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td> public readonly Socket Socket </td>
@@ -45,8 +45,8 @@
   SocketClient's constructor initializes the class variables and prepare it for holding the client's socket.
   <table>
     <tr>
-      <td>Parameter</td>
-      <td>Description</td>
+      <th>Parameter</th>
+      <th>Description</th>
     </tr>
     <tr>
       <td>Socket client</td>
@@ -65,8 +65,8 @@
     Adds the given Event and Action to <i>_events</i> dictionary.
     <table>
     <tr>
-      <td>Parameter</td>
-      <td>Description</td>
+      <th>Parameter</th>
+      <th>Description</th>
     </tr>
     <tr>
       <td>string rEvent</td>
@@ -81,8 +81,8 @@
   Sends an Event with a Message to the client side.
   <table>
     <tr>
-      <td>Parameter</td>
-      <td>Description</td>
+      <th>Parameter</th>
+      <th>Description</th>
     </tr>
     <tr>
       <td>string sEvent</td>
