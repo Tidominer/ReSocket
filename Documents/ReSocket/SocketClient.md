@@ -34,7 +34,7 @@
   </tr>
   <tr>
     <td> public Action OnDisconnect </td>
-    <td> An action which gets invoked when the client dissconnects from the server. </td>
+    <td> An action which gets invoked when the client disconnects from the server. </td>
   </tr>
 </table>
   
@@ -94,5 +94,5 @@
     </tr>
   </table>
   <l1> <h2> public void Disconnect () </h2> </li>
-  Shuts down the connection from server to the client ,invokes OnDissconnect action and disposes the socket.
+  Shuts down the connection from server to the client ,invokes OnDisconnect action and disposes the socket.
 </ul>
