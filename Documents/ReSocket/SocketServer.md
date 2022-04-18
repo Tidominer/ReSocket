@@ -1,4 +1,4 @@
-# [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md) > [ReSocket Server](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/ReSocket.md) > SockerServer
+# [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md) > [ReSocket Server](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/ReSocket.md) > SocketServer
 #### SocketServer is a wrapper for TCP Socket Servers. Create an instance of this class to initialize a socket server.
 
 # Public Variables
