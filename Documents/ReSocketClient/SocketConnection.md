@@ -41,8 +41,8 @@
   SocketConnection's constructor initializes the socket object, but does not connect it.
   <table>
     <tr>
-      <td>Parameter</td>
-      <td>Description</td>
+      <th>Parameter</th>
+      <th>Description</th>
     </tr>
     <tr>
       <td>string ipAddress</td>
@@ -59,8 +59,8 @@
   Sends an event call with a message to the server.
     <table>
     <tr>
-      <td>Parameter</td>
-      <td>Description</td>
+      <th>Parameter</th>
+      <th>Description</th>
     </tr>
     <tr>
       <td>string sEvent</td>
@@ -73,6 +73,20 @@
   </table>
   <l1> <h2> void On (string rEvent, Action<string> rAction) </h2> </li>
   Adds the given Event and Action to <i>Events</i> dictionary.
+  <table>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+    <tr>
+      <td>string rEvent</td>
+      <td>Event name.</td>
+    </tr>
+    <tr>
+      <td>string rAction</td>
+      <td>Action that will be invoked when <i>rEvent</i> is received from the client.</td>
+    </tr>
+  </table>
   <l1> <h2> public void Disconnect () </h2> </li>
   Closes the connection to ther server and invokes OnDisconnect.
 </ul>
