@@ -11,7 +11,7 @@ After downloading and adding the "ReSocket" directory to your project, you can i
     server.Start();
     
 ### ReSocket Client
-After downloading and adding the "ReSocketClient" directory to your project, you can initialize a tcp socket client like this :
+After downloading and adding the "ReSocketClient" directory to your project, you can initialize a tcp socket connection like this :
 
     ReSocketClient.SocketConnection connection = new ReSocketClient.SocketConnection(IP,Port);
     //Use connection.On to define an event
@@ -19,6 +19,6 @@ After downloading and adding the "ReSocketClient" directory to your project, you
     //Use connection.Send to send an event
     
 # Unity Client
-There is also a client That works in Unity engine. You can use it for making online games. An example for that will be uploaded soon.
+There is also a client That works in Unity engine. You can use it for making online games. An example for that will be added soon.
 # [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md)
 Writing documents is in progress.
