@@ -5,8 +5,8 @@
 
 <table>
   <tr>
-    <td>Variable</td>
-    <td>Description</td>
+    <th>Variable</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td> public readonly IPAddress IpAddress </td>
@@ -41,8 +41,8 @@
   SockerServer's constructor initializes a Socket On given IP and Port <b>but <i>DOES NOT</i> start the server!</b>
   <table>
     <tr>
-      <td>Parameter</td>
-      <td>Description</td>
+      <th>Parameter</th>
+      <th>Description</th>
     </tr>
     <tr>
       <td>string ipAddress</td>
@@ -63,8 +63,8 @@
   Sends an event call to all connected clients.
     <table>
     <tr>
-      <td>Parameter</td>
-      <td>Description</td>
+      <th>Parameter</th>
+      <th>Description</th>
     </tr>
     <tr>
       <td>string sEvent</td>
