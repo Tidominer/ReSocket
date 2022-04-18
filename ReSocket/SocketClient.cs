@@ -1,4 +1,4 @@
-﻿// ReSocket by Tidominer
+// ReSocket by Tidominer
 // https://github.com/Tidominer/ReSocket/
 
 using System;
@@ -84,10 +84,11 @@ namespace ReSocket
                     }
                     catch
                     {
-                        break;
+                        Disconnect();
                     }
                 }
             }
+            //ReSharper disable once FunctionNeverReturns
         }
 
         private void ReceiveData(TaskCompletionSource<bool> tcs)
