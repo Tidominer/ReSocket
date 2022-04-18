@@ -17,24 +17,21 @@ namespace ReSocketClient
         public readonly Socket Socket;
         public readonly IPAddress IpAddress;
         public readonly int Port;
-        public readonly IPEndPoint EndPoint;
         public readonly Dictionary<string, Action<string>> Events;
-        public bool Connected => Socket.Connected;
-        public bool Disconnected { get; private set; }
-
-        public int ReceiveBufferSize = 1024;
-
+        public bool Connected { get; private set; }
         public Action OnDisconnect;
         
+        private int ReceiveBufferSize = 1024;
+        private readonly IPEndPoint _endPoint;
         private readonly byte[] _receiveBuffer;
 
         public SocketConnection(string ipAddress, int port)
         {
-            Disconnected = false;
+            Connected = false;
             _receiveBuffer = new byte[ReceiveBufferSize];
             IpAddress = IPAddress.Parse(ipAddress);
             Port = port;
-            EndPoint = new IPEndPoint(IpAddress, Port);
+            _endPoint = new IPEndPoint(IpAddress, Port);
             Events = new Dictionary<string, Action<string>>();
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
@@ -43,8 +40,13 @@ namespace ReSocketClient
         {
             if (!Connected)
             {
-                Socket.Connect(EndPoint);
+                Socket.Connect(_endPoint);
+                Connected = true;
                 ConnectionLoop();
+            }
+            else
+            {
+                throw new Exception("Socket is currently connected to server");
             }
         }
         
@@ -62,7 +64,7 @@ namespace ReSocketClient
 
         private async void ConnectionLoop()
         {
-            while (Connected && !Disconnected)
+            while (Connected)
             {
                 try
                 {
@@ -108,9 +110,9 @@ namespace ReSocketClient
 
         public void Disconnect()
         {
-            if (!Disconnected)
+            if (Connected)
             {
-                Disconnected = true;
+                Connected = false;
                 Socket.Close();
                 Console.WriteLine("Disconnected From Server");
                 OnDisconnect?.Invoke();
