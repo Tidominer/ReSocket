@@ -16,8 +16,10 @@ namespace ReSocket
         // ReSharper disable MemberCanBePrivate.Global UnusedAutoPropertyAccessor.Global UnusedMember.Global
         public readonly Socket Socket;
         public readonly SocketServer Server;
-        public readonly string Ip;
+        public readonly string IpAddress;
         public readonly int Port;
+        
+        public bool Connected { get; private set; }
         public bool Listening { get; private set; }
         
         public Action OnDisconnect;
@@ -30,8 +32,6 @@ namespace ReSocket
         
         private string _receivedDataQuery;
 
-        public bool Connected { get; private set; }
-
         public SocketClient(Socket client, SocketServer server)
         {
             Connected = true;
@@ -41,7 +41,7 @@ namespace ReSocket
             _receiveBuffer = new byte[ReceiveBufferSize];
             _receivedDataQuery = "";
             var split = ((IPEndPoint) client.RemoteEndPoint).ToString().Split(':');
-            Ip = split[0];
+            IpAddress = split[0];
             Port = int.Parse(split[1]);
             ReceiveDataLoop();
         }
@@ -55,17 +55,17 @@ namespace ReSocket
         {
             Listening = false;
         }
+        
+        public void On(string rEvent, Action<string> rAction)
+        {
+            _events.Add(rEvent, rAction);
+        }
 
         public void Send(string sEvent, string sMessage = "")
         {
             var text = sEvent + "<?:>" + sMessage + "<?;>";
             var bytes = Encoding.UTF8.GetBytes(text);
             Socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, (ar) => { Socket.EndSend(ar); }, new object());
-        }
-
-        public void On(string rEvent, Action<string> rAction)
-        {
-            _events.Add(rEvent, rAction);
         }
 
         private async void ReceiveDataLoop()
