@@ -9,6 +9,6 @@
 
 ## Guides and Tutorials
 <ul>
-  <li> How to make a messging console application using ReSocket (WIP) </li>
-  <li> How to make an online game in Unity using ReSocket (WIP) </li>
+  <li> How to make a messenger console application using ReSocket (Soon) </li>
+  <li> How to make an online game in Unity using ReSocket (Soon) </li>
 </ul>
