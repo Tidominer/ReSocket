@@ -19,6 +19,6 @@ After downloading and adding the "ReSocketClient" directory to your project, you
     //Use connection.Send to send an event
     
 # Unity Client
-There is also a client That works in Unity engine. You can use it for making online games. An example for that will be added soon.
+There is also a client That works in Unity engine. You can use it for making online games. An example for that will be provided soon.
 # [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md)
 Writing documents is in progress.
