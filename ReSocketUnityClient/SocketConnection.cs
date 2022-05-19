@@ -1,4 +1,4 @@
-﻿// ReSocket by Tidominer
+// ReSocket by Tidominer
 // https://github.com/Tidominer/ReSocket/
 
 using System;
@@ -9,32 +9,29 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace ReSocketUnityClient
 {
-    public class SocketConnection
+    public class SocketConnection : MonoBehaviour
     {
-        // ReSharper disable FieldCanBeMadeReadOnly.Global MemberCanBePrivate.Global
-        public Socket Socket { get; }
-        public IPAddress IpAddress  { get; }
-        public int Port  { get; }
-        public IPEndPoint EndPoint  { get; }
-        public bool Connected => Socket.Connected;
-        public bool Disconnected { get; private set; }
-
-        public int ReceiveBufferSize = 1024; 
+        //ofu
+        public string ipAddress;
+        public int port;
         
-        public Dictionary<string, Action<string>> Events;
-        
+        // ReSharper disable FieldCanBeMadeReadOnly.Global MemberCanBePrivate.Global UnassignedField.Global
+        public readonly Socket Socket;
+        public IPAddress IpAddress { get; private set; }
+        public int Port { get; private set; }
+        public readonly Dictionary<string, Action<string>> Events;
+        public bool Connected { get; private set; }
         public Action OnDisconnect;
+        private int ReceiveBufferSize = 1024;
+        private IPEndPoint _endPoint;
+        private byte[] _receiveBuffer;
+        private readonly ConcurrentQueue<Action> _executionQueue; //ofu
         
-        private readonly byte[] _receiveBuffer;
-        
-        //-------------------------------- Unity Thing ----------------------------------
-        private readonly ConcurrentQueue<Action> _executionQueue;
-        
-        //!!! Call this function in Update !!! 
-        public void Update()
+        protected virtual void Update() //ofu
         {
             while (_executionQueue!=null && !_executionQueue.IsEmpty)
             {
@@ -42,32 +39,32 @@ namespace ReSocketUnityClient
                 action?.Invoke();
             }
         }
-        //-------------------------------------------------------------------------------
 
-        public SocketConnection(string ipAddress, int port)
+        public SocketConnection() //cfu
         {
-            Disconnected = false;
-            _receiveBuffer = new byte[ReceiveBufferSize];
-            IpAddress = IPAddress.Parse(ipAddress);
-            Port = port;
-            _executionQueue = new ConcurrentQueue<Action>();
-            EndPoint = new IPEndPoint(IpAddress, Port);
+            Connected = false;
             Events = new Dictionary<string, Action<string>>();
             Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            _executionQueue = new ConcurrentQueue<Action>();
         }
+        
 
         public void Connect()
         {
+            _receiveBuffer = new byte[ReceiveBufferSize];
+            IpAddress = IPAddress.Parse(ipAddress);
+            Port = port;
+            _endPoint = new IPEndPoint(IpAddress, Port);
             if (!Connected)
             {
-                Socket.Connect(EndPoint);
+                Socket.Connect(_endPoint);
+                Connected = true;
                 ConnectionLoop();
             }
-        }
-
-        public void On(string rEvent, Action<string> rAction)
-        {
-            Events.Add(rEvent, rAction);
+            else
+            {
+                throw new Exception("Socket is currently connected to server");
+            }
         }
         
         public void Send(string sEvent,string sMessage = "")
@@ -77,9 +74,14 @@ namespace ReSocketUnityClient
             try {Socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, ar => { Socket.EndSend(ar); }, new object());}catch{/*ignored*/}
         }
 
+        public void On(string rEvent, Action<string> rAction)
+        {
+            Events.Add(rEvent, rAction);
+        }
+
         private async void ConnectionLoop()
         {
-            while (Connected && !Disconnected)
+            while (Connected)
             {
                 try
                 {
@@ -108,7 +110,7 @@ namespace ReSocketUnityClient
                         {
                             var split = request.Split(new[] {"<?:>"}, StringSplitOptions.None);
                             if (split.Length > 1)
-                                _executionQueue.Enqueue(() => { Events[split[0]].Invoke(split[1]);});
+                                _executionQueue.Enqueue(() => { Events[split[0]].Invoke(split[1]); }); //cfu
                         }
                     }
                     else
@@ -125,11 +127,10 @@ namespace ReSocketUnityClient
 
         public void Disconnect()
         {
-            if (!Disconnected)
+            if (Connected)
             {
-                Disconnected = true;
+                Connected = false;
                 Socket.Close();
-                Console.WriteLine("Disconnected From Server");
                 OnDisconnect?.Invoke();
             }
         }
