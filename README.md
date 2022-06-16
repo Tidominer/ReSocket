@@ -1,5 +1,5 @@
 #  ReSocket
-ReSocket is an event-based C# TCP Socket wrapper that makes writing socket servers and clients **Really Easy**.
+ReSocket is an event-based C# TCP Socket wrapper which makes writing socket servers and clients **Really Easy**.
 # How to Use
 ### ReSocket Server
 After downloading and adding the "ReSocket" directory to your project, you can initialize a tcp socket server like this :
