@@ -76,12 +76,12 @@ namespace ReSocket
             Clients.Remove(client);
         }
 
-        public void SendToAll(string sEvent,string sMessage,SocketClient exception = null)
+        public void SendToAll(string @event,string text,SocketClient exception = null)
         {
             foreach (var client in Clients)
             {
                 if (exception==null||client!=exception)
-                    client.Send(sEvent,sMessage);
+                    client.Send(@event,text);
             }
         }
 

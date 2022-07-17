@@ -1,4 +1,4 @@
-// ReSocket by Tidominer
+﻿// ReSocket by Tidominer
 // https://github.com/Tidominer/ReSocket/
 
 using System;
@@ -30,8 +30,7 @@ namespace ReSocket
         private readonly Dictionary<string, Action<string>> _events;
 
         private readonly byte[] _receiveBuffer;
-        
-        private string _receivedDataQuery;
+
 
         public SocketClient(Socket client, SocketServer server)
         {
@@ -40,7 +39,6 @@ namespace ReSocket
             Server = server;
             _events = new Dictionary<string, Action<string>>();
             _receiveBuffer = new byte[ReceiveBufferSize];
-            _receivedDataQuery = "";
             var split = ((IPEndPoint) client.RemoteEndPoint).ToString().Split(':');
             IpAddress = split[0];
             Port = int.Parse(split[1]);
@@ -58,17 +56,30 @@ namespace ReSocket
             Listening = false;
         }
         
-        public void On(string rEvent, Action<string> rAction)
+        public void On(string @event, Action<string> action)
         {
-            _events.Add(rEvent, rAction);
+            _events.Add(@event, action);
         }
 
-        public void Send(string sEvent, string sMessage = "")
+        public void Send(string @event, string text = "")
         {
-            var text = sEvent + "<?:>" + sMessage + "<?;>";
-            var bytes = Encoding.UTF8.GetBytes(text);
-            Socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, (ar) => { Socket.EndSend(ar); }, new object());
+            var message = "<:>" + FilterMessage(@event) + "<?>" + FilterMessage(text) + "<;>";
+            var bytes = Encoding.UTF8.GetBytes(message);
+            try
+            {
+                Socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, ar => { Socket.EndSend(ar); }, new object());
+            }catch(Exception e){ Disconnect(e);}
         }
+
+        private string FilterMessage(string message) => message
+                .Replace(@"\",@"\\")
+                .Replace("<",@"\<")
+                .Replace(">",@"\>");
+        
+        private string UnFilterMessage(string message) => message
+            .Replace(@"\<","<")
+            .Replace(@"\>",">")
+            .Replace(@"\\",@"\");
 
         private async void ReceiveDataLoop()
         {
@@ -82,14 +93,16 @@ namespace ReSocket
                         ReceiveData(receiveTask);
                         await receiveTask.Task;
                     }
-                    catch
+                    catch(Exception e)
                     {
-                        Disconnect();
+                        Disconnect(e);
                     }
                 }
             }
             //ReSharper disable once FunctionNeverReturns
         }
+
+        private string _receivedData;
 
         private void ReceiveData(TaskCompletionSource<bool> tcs)
         {
@@ -101,26 +114,27 @@ namespace ReSocket
                     tcs.SetResult(true);
                     if (receivedBytes > 0)
                     {
-                        var receivedData = Encoding.UTF8.GetString(_receiveBuffer.Take(receivedBytes).ToArray());
-                        _receivedDataQuery += receivedData;
-                        var index = _receivedDataQuery.IndexOf("<?;>", StringComparison.Ordinal);
-                        while (index > -1)
+                        var receivedText = Encoding.UTF8.GetString(_receiveBuffer.Take(receivedBytes).ToArray());
+                        _receivedData += receivedText;
+                        var endIndex = _receivedData.IndexOf("<;>", StringComparison.Ordinal);
+                        while (endIndex > -1)
                         {
-                            var request = _receivedDataQuery.Substring(0, index)
-                                .Split(new[] {"<?:>"}, StringSplitOptions.None);
-                            if (request.Length > 1)
+                            var startIndex = _receivedData.IndexOf("<:>", StringComparison.Ordinal);
+                            if (startIndex < endIndex)
+                            {
+                                var message = _receivedData.Substring(startIndex + 3, endIndex - startIndex - 3)
+                                    .Split(new []{"<?>"},StringSplitOptions.None);
+                                _receivedData = _receivedData.Remove(startIndex, endIndex - startIndex + 3);
                                 try
                                 {
-                                    _events[request[0]].Invoke(request[1]);
+                                    _events[UnFilterMessage(message[0])].Invoke(UnFilterMessage(message[1]));
                                 }
                                 catch (Exception e)
                                 {
                                     Console.WriteLine(e.Message);
                                 }
-
-                            _receivedDataQuery =
-                                _receivedDataQuery.Substring(index + 4, _receivedDataQuery.Length - (index + 4));
-                            index = _receivedDataQuery.IndexOf("<?;>", StringComparison.Ordinal);
+                            }
+                            endIndex = _receivedData.IndexOf("<;>", StringComparison.Ordinal);
                         }
                     }
                     else
@@ -128,16 +142,14 @@ namespace ReSocket
                         Disconnect();
                     }
                 }
-                catch
-                {
-                    Disconnect();
+                catch(Exception e) {
+                    Disconnect(e);
                 }
             }, new object());
         }
 
-        public void Disconnect()
+        public void Disconnect(Exception exception = null)
         {
-            Console.WriteLine("Disconnected");
             if (Connected)
             {
                 Listening = false;
@@ -148,6 +160,19 @@ namespace ReSocket
                 Server.ClientDisconnected(this);
                 Socket.Dispose();
             }
+            //Console.WriteLine(exception?.Message);
+            //Console.WriteLine(exception?.StackTrace);
         }
+    }
+    
+    public struct Message
+    {
+        public Message(string @event, string text)
+        {
+            Event = @event;
+            Text = text;
+        }
+        public string Event;
+        public string Text;
     }
 }
