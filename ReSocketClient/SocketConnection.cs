@@ -20,10 +20,10 @@ namespace ReSocketClient
         public readonly Dictionary<string, Action<string>> Events;
         public bool Connected { get; private set; }
         public Action OnDisconnect;
-        
         private int ReceiveBufferSize = 1024;
         private readonly IPEndPoint _endPoint;
         private readonly byte[] _receiveBuffer;
+        private string _receivedData = "";
 
         public SocketConnection(string ipAddress, int port)
         {
@@ -50,16 +50,26 @@ namespace ReSocketClient
             }
         }
         
-        public void Send(string sEvent,string sMessage = "")
+        public void Send(string @event,string text = "")
         {
-            var text = sEvent + "<?:>" + sMessage + "<?;>";
-            var bytes = Encoding.UTF8.GetBytes(text);
-            try {Socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, ar => { Socket.EndSend(ar); }, new object());}catch{/*ignored*/}
+            var message = "<:>" + FilterMessage(@event) + "<?>" + FilterMessage(text) + "<;>";
+            var bytes = Encoding.UTF8.GetBytes(message);
+            try {Socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, ar => { Socket.EndSend(ar); }, new object());}catch(Exception e){ Disconnect(e);}
         }
+        
+        private string FilterMessage(string message) => message
+            .Replace(@"\",@"\\")
+            .Replace("<",@"\<")
+            .Replace(">",@"\>");
+        
+        private string UnFilterMessage(string message) => message
+            .Replace(@"\<","<")
+            .Replace(@"\>",">")
+            .Replace(@"\\",@"\");
 
-        public void On(string rEvent, Action<string> rAction)
+        public void On(string @event, Action<string> action)
         {
-            Events.Add(rEvent, rAction);
+            Events.Add(@event, action);
         }
 
         private async void ConnectionLoop()
@@ -72,10 +82,10 @@ namespace ReSocketClient
                     ReceiveData(tcs);
                     await tcs.Task;
                 }
-                catch{ Disconnect();}
+                catch(Exception e){ Disconnect(e);}
             }
         }
-        
+
         private void ReceiveData(TaskCompletionSource<bool> tcs)
         {
             Socket.ReceiveTimeout = 1;
@@ -87,36 +97,60 @@ namespace ReSocketClient
                     tcs.SetResult(true);
                     if (receivedBytes > 0)
                     {
-                        var data = Encoding.UTF8.GetString(_receiveBuffer.Take(receivedBytes).ToArray());
-                        var requests = data.Split(new[] {"<?;>"}, StringSplitOptions.None);
-                        foreach (var request in requests)
+                        var receivedText = Encoding.UTF8.GetString(_receiveBuffer.Take(receivedBytes).ToArray());
+                        _receivedData += receivedText;
+                        var endIndex = _receivedData.IndexOf("<;>", StringComparison.Ordinal);
+                        while (endIndex > -1)
                         {
-                            var split = request.Split(new[] {"<?:>"}, StringSplitOptions.None);
-                            if (split.Length > 1)
-                                Events[split[0]].Invoke(split[1]);
+                            var startIndex = _receivedData.IndexOf("<:>", StringComparison.Ordinal);
+                            if (startIndex < endIndex)
+                            {
+                                var message = _receivedData.Substring(startIndex + 3, endIndex - startIndex - 3)
+                                    .Split(new []{"<?>"},StringSplitOptions.None);
+                                _receivedData = _receivedData.Remove(startIndex, endIndex - startIndex + 3);
+                                try
+                                {
+                                    Events[UnFilterMessage(message[0])].Invoke(UnFilterMessage(message[1]));
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e.Message);
+                                }
+                            }
+                            endIndex = _receivedData.IndexOf("<;>", StringComparison.Ordinal);
                         }
                     }
                     else
-                    {
                         Disconnect();
-                    }
                 }
-                catch
+                catch (Exception e)
                 {
-                    Disconnect();
+                    Disconnect(e);
                 }
             }, new object());
         }
 
-        public void Disconnect()
+        public void Disconnect(Exception exception = null) //Exception for debug purposes
         {
             if (Connected)
             {
                 Connected = false;
                 Socket.Close();
-                Console.WriteLine("Disconnected From Server");
                 OnDisconnect?.Invoke();
             }
+            //Console.WriteLine(exception?.Message);
+            //Console.WriteLine(exception?.StackTrace);
         }
+    }
+
+    public struct Message
+    {
+        public Message(string @event, string text)
+        {
+            Event = @event;
+            Text = text;
+        }
+        public string Event;
+        public string Text;
     }
 }
