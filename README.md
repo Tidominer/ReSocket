@@ -1,24 +1,47 @@
 #  ReSocket
-ReSocket is an event-based C# TCP Socket wrapper which makes writing socket servers and clients **Really Easy**.
-# How to Use
-### ReSocket Server
-After downloading and adding the "ReSocket" directory to your project, you can initialize a tcp socket server like this :
 
-    ReSocket.SocketServer server = new ReSocket.SocketServer(IP,Port);
-    server.OnClientConnect = (client) => {
-        //Use client.On to define an event or client.Send to send an event to client.
+ReSocket, short for "Really Easy Socket," is a lightweight C# library designed to simplify the creation of TCP socket servers and clients. This library serves as a wrapper, offering users a straightforward interface for implementing event-based communication in their applications.
+
+# Usage Examples
+### ReSocket Server
+Here's a brief usage example for the ReSocket library to create a TCP socket server. For a more detailed example, please refer to the [documentation](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/ReSocket.md).
+
+```c#
+TcpServer server = new TcpServer("127.0.0.1", 143);
+
+server.OnClientConnect = (client) =>
+{
+    Console.WriteLine("Client Connected!");
+
+    client.On("event", (msg) =>
+    {
+        Console.WriteLine($"Received message: {msg}");
+    });
+
+    client.OnDisconnect = () =>
+    {
+        Console.WriteLine("Client Disconnected!");
     };
-    server.Start();
+};
+
+server.Start();
+```
     
 ### ReSocket Client
-After downloading and adding the "ReSocketClient" directory to your project, you can initialize a tcp socket connection like this :
+Here's a brief usage example for the ReSocket Client library to establish a TCP connection with a ReSocket server. For a more detailed example, please refer to the [documentation](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocketClient/ReSocketClient.md).
 
-    ReSocketClient.SocketConnection connection = new ReSocketClient.SocketConnection(IP,Port);
-    //Use connection.On to define an event
-    connection.Connect();
-    //Use connection.Send to send an event
-    
-# Unity Client
-There is also a client That works in Unity engine. You can use it for making online games. An example for that will be provided soon.
-# [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md)
-Writing documents is in progress.
+```c#
+TcpConnection connection = new TcpConnection("127.0.0.1", 143);
+
+connection.On("event", (msg) =>
+{
+    Console.WriteLine($"Received message: {msg}");
+});
+
+connection.Connect();
+
+connection.Send("event", "message");
+```
+
+# [Documentation](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md)
+The documentation includes usage examples for both ReSocket and ReSocket Client, along with concise explanations of their respective classes.
