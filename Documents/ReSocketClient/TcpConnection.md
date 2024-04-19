@@ -1,7 +1,7 @@
-# [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md) > [ReSocket Client](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket%20Client/ReSocketClient.md) > TcpConnection
+# [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md) > [ReSocket Client](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocketClient/ReSocketClient.md) > TcpConnection
 
 
-The [`TcpConnection`](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket%20Client/TcpConnection.md) class in the [`ReSocket Client`](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket%20Client/ReSocketClient.md) library facilitates the establishment of TCP connections with ReSocket servers, enabling efficient communication between client and server applications. This class abstracts away the complexities of socket programming, providing a simple interface for sending and receiving data asynchronously.
+The [`TcpConnection`](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocketClient/TcpConnection.md) class in the [`ReSocket Client`](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocketClient/ReSocketClient.md) library facilitates the establishment of TCP connections with ReSocket servers, enabling efficient communication between client and server applications. This class abstracts away the complexities of socket programming, providing a simple interface for sending and receiving data asynchronously.
 
 ### Constructor
 - **Parameters**:

@@ -1,8 +1,8 @@
 # [Documents](https://github.com/Tidominer/ReSocket/blob/main/Documents/Documents.md) > ReSocket Server
 
-With [`ReSocket`](https://github.com/Tidominer/ReSocket/ReSocket.md), you can effortlessly develop robust socket-based servers without the complexities typically associated with socket programming.
+With [`ReSocket`](https://github.com/Tidominer/ReSocket/), you can effortlessly develop robust socket-based servers without the complexities typically associated with socket programming.
 
-Below is a basic example demonstrating how to create a TCP socket server using [`ReSocket`](https://github.com/Tidominer/ReSocket/ReSocket.md):
+Below is a basic example demonstrating how to create a TCP socket server using [`ReSocket`](https://github.com/Tidominer/ReSocket/):
 
 ```c#
 // Create a new server instance
@@ -31,7 +31,7 @@ server.Start();
 
 In this example, we instantiate a TcpServer object with the desired IP address (127.0.0.1) and port number (143). We then define an event handler for client connections using the OnClientConnect property of the server instance. Inside this event handler, you can define custom events to handle various client interactions, such as receiving messages ("event") or detecting client disconnections (OnDisconnect). Finally, we start the server using the Start() method.
 
-This example provides a foundation for building TCP socket servers with [`ReSocket`](https://github.com/Tidominer/ReSocket/ReSocket.md), allowing you to easily handle client-server interactions in your applications.
+This example provides a foundation for building TCP socket servers with [`ReSocket`](https://github.com/Tidominer/ReSocket/), allowing you to easily handle client-server interactions in your applications.
 ## Classes
 
   - [**TcpServer**](https://github.com/Tidominer/ReSocket/blob/main/Documents/ReSocket/TcpServer.md)
